@@ -4,7 +4,7 @@ use clap::Parser;
 use indicatif::{HumanCount, HumanDuration, ParallelProgressIterator, ProgressStyle};
 use rayon::prelude::*;
 
-/// Tries cracking a ZIP file via dictionary attack
+/// Tries to determine the password of a ZIP file via dictionary attack
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
 struct Args {
@@ -14,7 +14,7 @@ struct Args {
     /// Path to the ZIP file
     zip: std::path::PathBuf,
 
-    /// Displays a progressbar
+    /// Display a progressbar
     #[arg(short, long)]
     progress: bool,
 }

@@ -14,11 +14,12 @@ RUSTFLAGS='-C target-cpu=native' cargo run --release -- examples/dictionary.txt 
 # Compile the program to "target/release/zip_dict_attack(.exe)"
 cargo build --release
 ```
+<details>
+  <summary>Help information</summary>
 
-Help information
 ```
 ./zip_dict_attack --help
-Tries cracking a ZIP file via dictionary attack
+Tries to determine the password of a ZIP file via dictionary attack
 
 Usage: zip_dict_attack [OPTIONS] <DICT> <ZIP>
 
@@ -27,10 +28,12 @@ Arguments:
   <ZIP>   Path to the ZIP file
 
 Options:
-  -p, --progress  Displays a progressbar
+  -p, --progress  Display a progressbar
   -h, --help      Print help information
   -V, --version   Print version information
 ```
+
+</details>
 
 A proper password dictionary which works on `examples/archive.zip` can be downloaded here:
 ```shell
