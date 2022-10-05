@@ -14,6 +14,12 @@ RUSTFLAGS='-C target-cpu=native' cargo run --release -- examples/dictionary.txt 
 # Compile the program to "target/release/zip_dict_attack(.exe)"
 cargo build --release
 ```
+
+A proper password dictionary which works on `examples/archive.zip` can be downloaded here:
+```shell
+wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/xato-net-10-million-passwords.txt
+```
+
 <details>
   <summary>Help information</summary>
 
@@ -34,8 +40,3 @@ Options:
 ```
 
 </details>
-
-A proper password dictionary which works on `examples/archive.zip` can be downloaded here:
-```shell
-wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/xato-net-10-million-passwords.txt
-```
