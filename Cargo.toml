@@ -9,5 +9,4 @@ license = "MIT"
 rayon = "1.5.3"
 zip = "0.6.2"
 indicatif = {version = "*", features = ["rayon"]}
-humantime = "2.1.0"
 clap = { version = "4.0.9", features = ["derive"] }
