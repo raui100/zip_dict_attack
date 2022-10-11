@@ -9,4 +9,4 @@ license = "MIT"
 rayon = "1.5.3"
 zip = "0.6.2"
 indicatif = {version = "*", features = ["rayon"]}
-clap = { version = "4.0.9", features = ["derive"] }
+clap = { version = "4.0.13", features = ["derive"] }
