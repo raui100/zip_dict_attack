@@ -26,16 +26,17 @@ fn main() {
     // Parses the arguments from the command line
     let args = Args::parse();
     // Reading in the password dictionary
-    let dict_string = std::fs::read_to_string(&args.dict)
-        .unwrap_or_else(|_| panic!("Failed reading the dictionary file: {}", args.dict.display()));
+    let dict_string = std::fs::read_to_string(&args.dict).unwrap_or_else(|_| {
+        panic!(
+            "Failed reading the dictionary file: {}",
+            args.dict.display()
+        )
+    });
     let dict: Vec<&str> = dict_string.lines().collect();
 
     // Reading the ZIP file into RAM
-    let zip_file = Cursor::new(
-        std::fs::read(&args.zip)
-            .unwrap_or_else(|_| panic!("Failed reading the ZIP file: {}", args.zip.display()))
-    );
-
+    let zip_file = std::fs::read(&args.zip)
+        .unwrap_or_else(|_| panic!("Failed reading the ZIP file: {}", args.zip.display()));
 
     // Trying all passwords that are provided via the password dictionary until a valid password is found
     let password = match args.progress {
@@ -45,18 +46,15 @@ fn main() {
                 .template("[{elapsed_precise}] {spinner} {pos:>7}/{len:7} throughput:{per_sec} (eta:{eta})")
                 .expect("Failed to create progress style");
 
-            dict
-                .par_iter()
+            dict.par_iter()
                 .enumerate()
                 .progress_with_style(progress_style)
-                .find_map_any(|(ind, s)| decrypt(ind, s, zip_file.clone()))
-        },
-        false => {
-            dict
-                .par_iter()
-                .enumerate()
-                .find_map_any(|(ind, s)| decrypt(ind, s, zip_file.clone()))
+                .find_map_any(|(ind, s)| decrypt(ind, s, &zip_file))
         }
+        false => dict
+            .par_iter()
+            .enumerate()
+            .find_map_any(|(ind, s)| decrypt(ind, s, &zip_file)),
     };
 
     // Stops measuring the runtime
@@ -78,8 +76,9 @@ fn main() {
     println!("Duration: {}", HumanDuration(stop));
 }
 
-fn decrypt(ind: usize, password: &str, mut zip_file: Cursor<Vec<u8>>) -> Option<(usize, String)> {
-    let mut archive = zip::ZipArchive::new(&mut zip_file).expect("Failed opening ZIP archive");
+fn decrypt<'a>(ind: usize, password: &'a str, zip_file: &[u8]) -> Option<(usize, &'a str)> {
+    let cursor = Cursor::new(zip_file);
+    let mut archive = zip::ZipArchive::new(cursor).expect("Failed opening ZIP archive");
     let result = archive.by_index_decrypt(0, password.as_bytes());
 
     match result {
@@ -87,7 +86,7 @@ fn decrypt(ind: usize, password: &str, mut zip_file: Cursor<Vec<u8>>) -> Option<
             let mut buffer = Vec::with_capacity(zip.size() as usize);
             match zip.read_to_end(&mut buffer) {
                 Err(_) => None, // False positive due to weakness of the ZipCrypto algorithm
-                Ok(_) => Some((ind, password.to_string())),
+                Ok(_) => Some((ind, password)),
             }
         }
         _ => None,
